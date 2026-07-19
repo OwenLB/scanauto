@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScanAuto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0C0C0C;
+      --surface: #111111;
+      --card: #181818;
+      --border: rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.12);
+      --text: #F2F2F2;
+      --text-2: #AAAAAA;
+      --text-3: #666666;
+      --text-4: #333333;
+      --f: 'Inter', system-ui, sans-serif;
+      --fd: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--f);
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      height: 48px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--text-2);
+    }
+    .header .title {
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .header .version {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: 'Inter', monospace;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── STATES ── */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* ── EMPTY STATE ── */
+    #state-not-lbc {
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 36px;
+      height: 36px;
+      display: block;
+      margin: 0 auto 14px;
+      color: var(--text-4);
+    }
+    #state-not-lbc p {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.7;
+    }
+    #state-not-lbc strong { color: var(--text-2); font-weight: 500; }
+
+    /* ── LOADING ── */
+    #state-loading {
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .loading-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border-mid);
+      border-top-color: var(--text-2);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #state-loading p { font-size: 13px; color: var(--text-3); }
+
+    /* ── FORM ── */
+    .content { padding: 16px; }
+
+    .url-bar {
+      font-size: 11px;
+      color: var(--text-3);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 11px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 9px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-3);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-size: 12px;
+      padding: 7px 10px;
+      outline: none;
+      font-family: var(--f);
+      transition: border-color 0.15s;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--border-mid); }
+    .field textarea { resize: none; }
+    .field select option { background: var(--surface); }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-4); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      width: 100%;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 10px;
+      padding: 11px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--f);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s;
+      margin-top: 4px;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-ghost {
+      width: 100%;
+      background: transparent;
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      font-size: 12px;
+      font-family: var(--f);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text-2); border-color: var(--border-mid); }
+
+    /* ── ERROR ── */
+    .error-msg {
+      font-size: 11px;
+      color: #F87171;
+      padding: 8px 0 4px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── APP URL ── */
+    .app-url {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-url label {
+      font-size: 10px;
+      color: var(--text-3);
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .app-url input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-3);
+      font-size: 11px;
+      padding: 4px 8px;
+      outline: none;
+      font-family: var(--f);
+      transition: border-color 0.15s;
+    }
+    .app-url input:focus { border-color: var(--border-mid); color: var(--text-2); }
+
+    .retry-btn {
+      background: var(--surface);
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 16px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--f);
+      margin-top: 12px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .retry-btn:hover { color: var(--text-2); border-color: var(--border-mid); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+      <line x1="7" y1="12" x2="17" y2="12"/>
+    </svg>
+    <span class="title">ScanAuto</span>
+    <span class="version" id="version-tag">v–</span>
+  </div>
+
+  <!-- State: not on LBC or error -->
+  <div id="state-not-lbc" class="state">
+    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <p>Ouvrez une annonce véhicule<br>sur <strong>leboncoin.fr</strong></p>
+  </div>
+
+  <!-- State: scraping in progress -->
+  <div id="state-loading" class="state">
+    <div class="loading-spinner"></div>
+    <p>Extraction en cours…</p>
+  </div>
+
+  <!-- State: form filled -->
+  <div id="state-filled" class="state">
+    <div class="content">
+
+      <!-- Photos détectées — en haut -->
+      <div class="section" id="images-section">
+        <div class="section-title">Photos détectées</div>
+        <div id="images-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;min-height:40px;"></div>
+      </div>
+
+      <div class="url-bar" id="filled-url"></div>
+
+      <!-- Véhicule -->
+      <div class="section">
+        <div class="section-title">Véhicule</div>
+        <div class="row">
+          <div class="field">
+            <label>Marque</label>
+            <input type="text" id="marque" placeholder="Renault" />
+          </div>
+          <div class="field">
+            <label>Modèle</label>
+            <input type="text" id="modele" placeholder="Clio" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Finition / Version</label>
+          <input type="text" id="finition" placeholder="Business, Sport, S-line…" />
+        </div>
+        <div class="field">
+          <label>Motorisation</label>
+          <input type="text" id="motorisation" placeholder="2.2 JTD 150ch AT8" />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Année</label>
+            <input type="number" id="annee" placeholder="2017" min="1990" max="2030" />
+          </div>
+          <div class="field">
+            <label>Kilométrage</label>
+            <input type="number" id="kilometrage" placeholder="120000" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Carburant</label>
+            <select id="carburant">
+              <option value="">—</option>
+              <option>Diesel</option>
+              <option>Essence</option>
+              <option>Hybride</option>
+              <option>Électrique</option>
+              <option>GPL</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Boîte</label>
+            <select id="boite">
+              <option value="">—</option>
+              <option value="manuelle">Manuelle</option>
+              <option value="automatique">Automatique</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Prix (€)</label>
+            <input type="number" id="prix" placeholder="11900" />
+          </div>
+          <div class="field">
+            <label>Nb propriétaires</label>
+            <input type="number" id="nb_proprietaires" placeholder="2" min="1" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendeur -->
+      <div class="section">
+        <div class="section-title">Vendeur</div>
+        <div class="row">
+          <div class="field">
+            <label>Type</label>
+            <select id="vendeur_type">
+              <option value="particulier">Particulier</option>
+              <option value="pro">Professionnel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Localisation</label>
+            <input type="text" id="vendeur_localisation" placeholder="Paris, 75" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Date de mise en ligne</label>
+          <input type="date" id="date_mise_en_ligne" />
+        </div>
+      </div>
+
+      <!-- Entretien -->
+      <div class="section">
+        <div class="section-title">Entretien</div>
+        <div class="row">
+          <div class="field">
+            <label>Contrôle technique</label>
+            <select id="ct_valide">
+              <option value="non_mentionné">Non mentionné</option>
+              <option value="oui">Valide</option>
+              <option value="non">Non valide</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Carnet d'entretien</label>
+            <select id="carnet_entretien">
+              <option value="non_mentionné">Non mentionné</option>
+              <option value="oui">Présent</option>
+              <option value="non">Absent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annonce -->
+      <div class="section">
+        <div class="section-title">Annonce</div>
+        <div class="field">
+          <label>Infos clés (extraites de LBC)</label>
+          <textarea id="infos_cles" rows="6" placeholder="Marque : …&#10;Kilométrage : …&#10;Énergie : …"></textarea>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="description" rows="5" placeholder="Options, équipements, état du véhicule…"></textarea>
+        </div>
+        <div class="field">
+          <label>Lien annonce</label>
+          <input type="url" id="lien_annonce" />
+        </div>
+      </div>
+
+      <div id="error-msg" class="error-msg" style="display:none;"></div>
+
+      <button class="btn-primary" id="analyze-btn">Analyser avec ScanAuto</button>
+      <button class="btn-ghost" id="rescrape-btn">↻ Rescaper l'annonce</button>
+
+      <div class="app-url">
+        <label>App URL</label>
+        <input type="text" id="app-url-input" placeholder="https://scanauto.netlify.app" />
+      </div>
+    </div>
+  </div>
+
+  <script src="vehicleSchema.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

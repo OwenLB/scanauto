@@ -1,0 +1,10 @@
+graph LR
+    R1["R1 — Extraction\nHaiku 4.5\n~1 500 tokens"] --> R2
+    R1 --> R5
+    R2["R2 — Scoring + Fiabilité\nSonnet 4.6\n~2 000 tokens"] --> R3
+    R5["R5 — Infos pratiques\nHaiku 4.5\n~1 000 tokens"] --> R3
+    R3["R3 — Coûts maintenance\nSonnet 4.6\n~3 000 tokens"] --> R4
+    R4["R4 — Négociation\nHaiku 4.5\n~1 500 tokens"]
+
+    style R2 fill:#1a1a1a,color:#f2f2f2
+    style R3 fill:#1a1a1a,color:#f2f2f2

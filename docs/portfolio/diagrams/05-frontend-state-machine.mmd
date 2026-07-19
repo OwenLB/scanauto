@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> idle
+    idle --> loading : START
+    loading --> loading : R1 / R2 / R3 / R4 / R5\n(sections révélées progressivement)
+    loading --> complete : COMPLETE
+    loading --> error : ERROR (fatal)
+    loading --> loading : error_r3 / error_r4\n(dégradation gracieuse)
+    complete --> idle : RESET
+    error --> idle : RESET

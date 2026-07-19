@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F5F5F5;
+  --surface: #FFFFFF;
+  --card: #FFFFFF;
+  --border: rgba(0,0,0,0.07);
+  --border-hover: rgba(0,0,0,0.14);
+  --text: #0C0C0C;
+  --text-secondary: #666666;
+  --text-tertiary: #AAAAAA;
+  --accent: #0C0C0C;
+  --accent-fg: #FFFFFF;
+
+  /* shadcn aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-secondary);
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --input: var(--border);
+  --ring: var(--accent);
+  --radius: 0.75rem;
+}
+
+.dark {
+  --bg: #0C0C0C;
+  --surface: #111111;
+  --card: #181818;
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.14);
+  --text: #F2F2F2;
+  --text-secondary: #AAAAAA;
+  --text-tertiary: #666666;
+  --accent: #F2F2F2;
+  --accent-fg: #0C0C0C;
+
+  /* shadcn aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-fg);
+  --secondary: var(--surface);
+  --secondary-foreground: var(--text);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-secondary);
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --input: var(--border);
+  --ring: var(--accent);
+  --radius: 0.75rem;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.animate-spin, .skeleton {
+  transition: none;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@media print {
+  .no-print { display: none !important; }
+
+  @page {
+    margin: 15mm 20mm;
+    size: A4 portrait;
+  }
+
+  /* Force light theme — évite texte blanc sur papier blanc en dark mode */
+  html, html.dark {
+    --bg: #ffffff;
+    --surface: #f5f5f5;
+    --card: #ffffff;
+    --border: #d4d4d4;
+    --border-hover: #a3a3a3;
+    --text: #171717;
+    --text-secondary: #525252;
+    --text-tertiary: #a3a3a3;
+    --accent: #171717;
+    --accent-fg: #ffffff;
+    --background: #ffffff;
+    --foreground: #171717;
+    --card-foreground: #171717;
+    --muted: #f5f5f5;
+    --muted-foreground: #525252;
+  }
+
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Désactive transitions et animations */
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Évite les coupures de page au milieu d'une card */
+  .rounded-xl, .rounded-lg {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

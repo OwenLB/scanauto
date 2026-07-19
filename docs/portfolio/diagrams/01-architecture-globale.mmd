@@ -1,0 +1,13 @@
+graph TD
+    U[Utilisateur] -->|URL ou texte| FE[Frontend React\nNetlify]
+    FE -->|POST /api/analyze/ SSE| BE[Backend Django\nRender / Railway]
+    FE -->|Auth JWT| SB[(Supabase\nPostgreSQL + Auth)]
+    BE -->|Supabase auth.get_user| SB
+    BE -->|Sauvegarde analyses| SB
+    BE -->|Scraping URL| FC[Firecrawl API]
+    BE -->|R1 Haiku 4.5| CA[Claude API\nAnthropic]
+    BE -->|R2 Sonnet 4.6| CA
+    BE -->|R3 Sonnet 4.6| CA
+    BE -->|R4 Haiku 4.5| CA
+    BE -->|R5 Haiku 4.5| CA
+    EXT[Extension Chrome MV3\nleboncoin.fr] -->|prefill URL| FE

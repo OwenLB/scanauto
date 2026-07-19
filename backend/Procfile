@@ -1,0 +1,1 @@
+web: gunicorn scanauto.wsgi:application --bind 0.0.0.0:$PORT --timeout 300 --keep-alive 5 --workers 2 --threads 4

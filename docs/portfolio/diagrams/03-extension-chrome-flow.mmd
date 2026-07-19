@@ -1,0 +1,7 @@
+flowchart LR
+    A[leboncoin.fr/annonce] -->|content.js s'exécute| B[Parse JSON-LD\n+ DOM fallbacks]
+    B --> C[chrome.storage.session]
+    C -->|icon click| D[Side Panel\nsidepanel.js]
+    D -->|Analyser| E[Ouvre ScanAuto\n#/?prefill=JSON]
+    E -->|VehicleForm mount| F[Pre-fill formulaire]
+    F -->|Submit| G[POST /api/analyze/]

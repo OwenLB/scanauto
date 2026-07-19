@@ -1,0 +1,9 @@
+flowchart TD
+    U[Utilisateur] -->|Saisit clé Anthropic| FE[Frontend]
+    FE -->|HTTPS POST| BE[Django]
+    BE -->|Fernet.encrypt| ENC[Clé chiffrée]
+    ENC -->|Stockée| SB[(Supabase\nuser_profiles)]
+    BE2[Requête analyze] -->|Fernet.decrypt\nen mémoire uniquement| KEY[Clé en clair]
+    KEY -->|anthropic.Anthropic client| CA[Claude API]
+    KEY -.->|jamais loggée\njamais persistée en clair| X[ ]
+    SB -->|RLS: user_id = auth.uid| PRIV[Isolation totale\npar utilisateur]

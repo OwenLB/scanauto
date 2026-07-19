@@ -1,0 +1,78 @@
+{
+  "title": "ScanAuto — Schéma véhicule",
+  "version": "1.0.0",
+  "description": "Définition canonique des champs d'un véhicule analysé par ScanAuto. Partagé entre l'extension Chrome (vehicleSchema.js), le frontend React (src/vehicleSchema.js) et le backend Django (views.py).",
+  "sections": {
+    "vehicule":  "Caractéristiques techniques du véhicule",
+    "vendeur":   "Informations sur le vendeur et l'annonce",
+    "entretien": "État d'entretien et documents",
+    "annonce":   "Contenu brut de l'annonce originale"
+  },
+  "normalization": {
+    "boite":           "LBC envoie 'Automatique'/'Manuelle' → normaliser en 'automatique'/'manuelle'",
+    "vendeur_type":    "LBC envoie 'Professionnel'/'Particulier' → normaliser en 'pro'/'particulier'",
+    "carnet_entretien":"LBC envoie le champ 'historique' en texte libre → parser pour déduire 'oui'/'non'/'non_mentionné'",
+    "motorisation":    "LBC envoie 'version' (ex: 'Giulia 2.2 JTD 150ch AT8') → mapper vers 'motorisation'"
+  },
+  "fields": [
+    {
+      "key": "marque",              "type": "text",     "label": "Marque",                "section": "vehicule",  "required": true
+    },
+    {
+      "key": "modele",              "type": "text",     "label": "Modèle",                "section": "vehicule",  "required": true
+    },
+    {
+      "key": "finition",            "type": "text",     "label": "Finition / Version",    "section": "vehicule"
+    },
+    {
+      "key": "motorisation",        "type": "text",     "label": "Motorisation",          "section": "vehicule",  "required": true
+    },
+    {
+      "key": "annee",               "type": "number",   "label": "Année",                 "section": "vehicule",  "required": true
+    },
+    {
+      "key": "kilometrage",         "type": "number",   "label": "Kilométrage",           "section": "vehicule",  "required": true
+    },
+    {
+      "key": "carburant",           "type": "select",   "label": "Carburant",             "section": "vehicule",  "default": "Diesel",
+      "options": ["Diesel", "Essence", "Hybride", "Électrique", "GPL"]
+    },
+    {
+      "key": "boite",               "type": "select",   "label": "Boîte",                 "section": "vehicule",
+      "options": ["", "manuelle", "automatique"]
+    },
+    {
+      "key": "prix",                "type": "number",   "label": "Prix (€)",              "section": "vehicule",  "required": true
+    },
+    {
+      "key": "nb_proprietaires",    "type": "number",   "label": "Nb propriétaires",      "section": "vehicule"
+    },
+    {
+      "key": "vendeur_type",        "type": "select",   "label": "Type de vendeur",       "section": "vendeur",   "default": "particulier",
+      "options": ["particulier", "pro"]
+    },
+    {
+      "key": "vendeur_localisation","type": "text",     "label": "Localisation",          "section": "vendeur"
+    },
+    {
+      "key": "date_mise_en_ligne",  "type": "date",     "label": "Date de mise en ligne", "section": "vendeur"
+    },
+    {
+      "key": "ct_valide",           "type": "select",   "label": "Contrôle technique",    "section": "entretien", "default": "non_mentionné",
+      "options": ["non_mentionné", "oui", "non"]
+    },
+    {
+      "key": "carnet_entretien",    "type": "select",   "label": "Carnet d'entretien",    "section": "entretien", "default": "non_mentionné",
+      "options": ["non_mentionné", "oui", "non"]
+    },
+    {
+      "key": "infos_cles",          "type": "textarea", "label": "Infos clés (LBC)",      "section": "annonce"
+    },
+    {
+      "key": "description",         "type": "textarea", "label": "Description",           "section": "annonce"
+    },
+    {
+      "key": "lien_annonce",        "type": "url",      "label": "Lien de l'annonce",     "section": "annonce"
+    }
+  ]
+}

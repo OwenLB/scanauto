@@ -1,0 +1,32 @@
+sequenceDiagram
+    participant FE as Frontend
+    participant BE as Django
+    participant CA as Claude API
+    participant SB as Supabase
+
+    FE->>BE: POST /api/analyze/ (vehicule JSON)
+    BE->>SB: create_analysis(user_id) → analysis_id
+    BE->>CA: R1 — Haiku 4.5 (extraction)
+    CA-->>BE: r1 JSON
+    BE-->>FE: SSE event:r1
+    BE->>SB: save r1
+
+    par Parallel
+        BE->>CA: R2 — Sonnet 4.6 (scoring)
+        BE->>CA: R5 — Haiku 4.5 (infos pratiques)
+    end
+    CA-->>BE: r2 JSON
+    BE-->>FE: SSE event:r2
+    CA-->>BE: r5 JSON
+    BE-->>FE: SSE event:r5
+    BE->>SB: save r2 + r5
+
+    BE->>CA: R3 — Sonnet 4.6 (coûts, slim context)
+    CA-->>BE: r3 JSON
+    BE-->>FE: SSE event:r3
+
+    BE->>CA: R4 — Haiku 4.5 (négociation, slim context)
+    CA-->>BE: r4 JSON
+    BE-->>FE: SSE event:r4
+    BE->>SB: save r3 + r4 + status:complete
+    BE-->>FE: SSE event:complete
